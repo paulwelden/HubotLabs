@@ -2,14 +2,28 @@
 #   An example deployment scenario for you to play with.
 #
 # Commands:
-#   hubot /deploy <system> to <enviornment>   Deploys the requested system.
+#   hubot deploy <system> to <enviornment>   Deploys the requested system.
 
 module.exports = (robot) ->
-  robot.respond /\/deploy (.*) to (.*)/i, (msg) ->
+  robot.respond /deploy (.*) to (.*)/i, (msg) ->
     system      = msg.match[1]
     enviornment = msg.match[2]
-    msg.send "Beginning Deployment of #{system} to #{enviornment}"
+
+    robot.emit 'slack-attachment',
+              channel: msg.message.room
+              fallback: """
+              >>>Beginning Deployment of *#{system}* to *#{enviornment}*
+              """
+              content:
+                color: "good",
+                fields:
+                  [
+                    {
+                      title: "Deployment has begun",
+                      value: "Beginning Deployment of #{system} to #{enviornment}"
+                    }
+                  ]
+
     setTimeout ( ->
-      msg.send "#{system} has been deployed to #{enviornment}"
-      msg.send "Please verify"
+      msg.send ">Release complete. Please verify and monitor for errors"
     ), 5000
