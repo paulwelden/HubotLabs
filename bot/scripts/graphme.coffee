@@ -7,3 +7,6 @@
 module.exports = (robot) ->
   robot.respond /graph me deploys.total/i, (msg) ->
     msg.send "https://raw.githubusercontent.com/paulwelden/HubotLabs/master/Images/Num%20Of%20Releases.png"
+
+  robot.respond /graph me system.status/i, (msg) ->
+    msg.send "https://raw.githubusercontent.com/paulwelden/HubotLabs/master/Images/System.Status.png"
