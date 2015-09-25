@@ -25,5 +25,18 @@ module.exports = (robot) ->
                   ]
 
     setTimeout ( ->
-      msg.send ">Release complete. Please verify and monitor for errors"
+      robot.emit 'slack-attachment',
+                channel: msg.message.room
+                fallback: """
+                >>>Deployment of *#{system}* to *#{enviornment}* is complete
+                """
+                content:
+                  color: "good",
+                  fields:
+                    [
+                      {
+                        title: "Deployment complete",
+                        value: "Deployment of #{system} to #{enviornment} is complete"
+                      }
+                    ]
     ), 5000
