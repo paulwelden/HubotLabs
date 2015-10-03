@@ -3,6 +3,7 @@
 #
 # Commands:
 #   hubot graph me deploys.total   Graph of recent deployments
+#   hubot graph me system.status   Current Status
 
 module.exports = (robot) ->
   robot.respond /graph me deploys.total/i, (msg) ->
