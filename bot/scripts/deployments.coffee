@@ -5,61 +5,59 @@
 #   hubot deploy <system> to <enviornment>   Deploys the requested system.
 #   hubot /deployed - Lists the recent deployments
 
-delay = (time, fn, args...) ->
-  setTimeout fn, time, args...
-
-beginRelease = (msg, deployment) ->
-  reployToChat(msg, "Deployment has begun", "Initiating #{deployment.system} to #{deployment.enviornment}")
-  delay 1000, ->
-    deployDatabase(msg, deployment)
-
-
-deployDatabase = (msg, deployment) ->
-  reployToChat(msg, "Database", "Publishing #{deployment.system}DB" )
-  delay 5000, ->
-    deployApplication(msg, deployment)
-
-
-deployApplication = (msg, deployment) ->
-  reployToChat(msg, "Application", "Publishing #{deployment.system}" )
-  delay 3000, ->
-    completed(msg, deployment)
-
-completed = (msg, deployment) ->
-  robot.emit 'slack-attachment',
-          channel: msg.message.room
-          fallback: """
-          Deployment has completed"
-          """
-          content:
-            color: "good",
-            pretext: "<https://github.com/paulwelden/HubotLabs|Deployment has completed>!",
-            fields:
-              [
-                {
-                  value: "#{deployment.system} is ready for verification"
-                }
-              ]
-
-reployToChat = (msg, pretext, msgValue) ->
-  robot.emit 'slack-attachment',
-          channel: msg.message.room
-          fallback: """
-          #{msgValue}
-          """
-          content:
-            color: "good",
-            pretext: "#{pretext}",
-            fields:
-              [
-                {
-                  value: "#{msgValue}"
-                }
-              ]
-
-
+delay = require './delay'
 
 module.exports = (robot) ->
+
+  beginRelease = (msg, deployment) ->
+    reployToChat(msg, "Deployment has begun", "Initiating #{deployment.system} to #{deployment.enviornment}")
+    delay 1000, ->
+      deployDatabase(msg, deployment)
+
+  deployDatabase = (msg, deployment) ->
+    reployToChat(msg, "Database", "Publishing #{deployment.system}DB" )
+    delay 5000, ->
+      deployApplication(msg, deployment)
+
+
+  deployApplication = (msg, deployment) ->
+    reployToChat(msg, "Application", "Publishing #{deployment.system}" )
+    delay 3000, ->
+      completed(msg, deployment)
+
+  completed = (msg, deployment) ->
+    robot.emit 'slack-attachment',
+            channel: msg.message.room
+            fallback: """
+            Deployment has completed"
+            """
+            content:
+              color: "good",
+              pretext: "<https://github.com/paulwelden/HubotLabs|Deployment has completed>!",
+              fields:
+                [
+                  {
+                    value: "#{deployment.system} is ready for verification"
+                  }
+                ]
+
+  reployToChat = (msg, pretext, msgValue) ->
+    robot.emit 'slack-attachment',
+            channel: msg.message.room
+            fallback: """
+            #{msgValue}
+            """
+            content:
+              color: "good",
+              pretext: "#{pretext}",
+              fields:
+                [
+                  {
+                    value: "#{msgValue}"
+                  }
+                ]
+
+
   robot.respond /deploy (.*) to (.*)/i, (msg) ->
     deployment =
       system      : msg.match[1]
