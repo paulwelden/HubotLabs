@@ -42,7 +42,20 @@ module.exports = (robot) ->
       completed(msg, deployment)
 
   completed = (msg, deployment) ->
-    reployToChat(msg, "Deployment has completed", "Nice!" )
+    robot.emit 'slack-attachment',
+            channel: msg.message.room
+            fallback: """
+            Deployment has completed"
+            """
+            content:
+              color: "good",
+              pretext: "<https://github.com/paulwelden/HubotLabs|Deployment has completed>!",            
+              fields:
+                [
+                  {
+                    value: "#{deployment.system} is ready for verification"
+                  }
+                ]
 
   reployToChat = (msg, pretext, msgValue) ->
     robot.emit 'slack-attachment',
